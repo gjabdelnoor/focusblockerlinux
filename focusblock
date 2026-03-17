@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LIB_DIR="/usr/local/lib/focusblock"
+COMMON_SH="$LIB_DIR/focusblock-common.sh"
+
+if [[ -f "$COMMON_SH" ]]; then
+  # shellcheck source=/usr/local/lib/focusblock/focusblock-common.sh
+  source "$COMMON_SH"
+fi
+
+require_root_if_needed() {
+  case "${1:-}" in
+    on|off|toggle|auto-on|auto-off|sync-now)
+      if [[ "${EUID}" -ne 0 ]]; then
+        exec sudo "$0" "$@"
+      fi
+      ;;
+  esac
+}
+
+show_usage() {
+  cat <<'EOF'
+Usage: focusblock <command>
+
+Commands:
+  on         Enable block now
+  off        Disable block now
+  toggle     Toggle block now
+  status     Show block and schedule status
+  auto-on    Enable daily schedule timers
+  auto-off   Disable daily schedule timers
+  sync-now   Apply current-time schedule immediately
+EOF
+}
+
+command="${1:-status}"
+require_root_if_needed "$@"
+
+case "$command" in
+  on)
+    systemctl start focusblock-enable.service
+    echo "Focusblock is ON"
+    ;;
+  off)
+    systemctl start focusblock-disable.service
+    echo "Focusblock is OFF"
+    ;;
+  toggle)
+    if [[ -f "$COMMON_SH" ]] && is_focusblock_enabled; then
+      systemctl start focusblock-disable.service
+      echo "Focusblock is OFF"
+    else
+      systemctl start focusblock-enable.service
+      echo "Focusblock is ON"
+    fi
+    ;;
+  status)
+    if [[ -f "$COMMON_SH" ]] && is_focusblock_enabled; then
+      echo "Block: ON"
+    else
+      echo "Block: OFF"
+    fi
+    systemctl is-enabled focusblock-enable.timer >/dev/null 2>&1 && echo "Schedule: enabled" || echo "Schedule: disabled"
+    echo
+    systemctl list-timers --all 'focusblock-*' --no-pager
+    ;;
+  auto-on)
+    systemctl enable --now focusblock-enable.timer focusblock-disable.timer
+    echo "Schedule enabled"
+    ;;
+  auto-off)
+    systemctl disable --now focusblock-enable.timer focusblock-disable.timer
+    echo "Schedule disabled"
+    ;;
+  sync-now)
+    "$LIB_DIR/focusblock-sync"
+    echo "Applied schedule for current time"
+    ;;
+  -h|--help|help)
+    show_usage
+    ;;
+  *)
+    show_usage
+    exit 1
+    ;;
+esac

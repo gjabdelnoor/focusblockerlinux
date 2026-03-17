@@ -1,0 +1,6 @@
+[Unit]
+Description=Disable focusblock domains in /etc/hosts
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/focusblock/focusblock-disable

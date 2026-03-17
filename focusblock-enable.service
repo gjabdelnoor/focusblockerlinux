@@ -1,0 +1,6 @@
+[Unit]
+Description=Enable focusblock domains in /etc/hosts
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/focusblock/focusblock-enable

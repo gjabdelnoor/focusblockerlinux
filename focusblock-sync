@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+hour_now="$(date +%H)"
+if [[ "$hour_now" -ge 7 && "$hour_now" -lt 17 ]]; then
+  "$SCRIPT_DIR/focusblock-enable"
+else
+  "$SCRIPT_DIR/focusblock-disable"
+fi
