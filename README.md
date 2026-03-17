@@ -1,5 +1,8 @@
 # focusblockerlinux
 
+![Version](https://img.shields.io/badge/version-V0.0.2-blue)
+![Platform](https://img.shields.io/badge/platform-linux-success)
+
 DNS productivity blocker for Linux using `/etc/hosts` + `systemd` timers.
 
 Blocks Reddit, YouTube, Instagram, and Meta/Facebook domains from **07:00 to 17:00** every day.
@@ -12,6 +15,14 @@ Blocks Reddit, YouTube, Instagram, and Meta/Facebook domains from **07:00 to 17:
 - Easy enable/disable for schedule itself
 
 ## Install
+
+Fast path:
+
+```bash
+sudo ./install.sh
+```
+
+Manual path:
 
 Copy scripts and unit files into system paths:
 
@@ -31,6 +42,12 @@ sudo systemctl enable --now focusblock-enable.timer focusblock-disable.timer
 sudo /usr/local/lib/focusblock/focusblock-sync
 ```
 
+## Uninstall
+
+```bash
+sudo ./uninstall.sh
+```
+
 ## Usage
 
 ```bash
@@ -42,6 +59,11 @@ focusblock auto-on
 focusblock auto-off
 focusblock sync-now
 ```
+
+Desktop launcher (after install):
+
+- App name: `Focusblock Toggle`
+- It appears in your application menu and toggles block on/off
 
 ## Notes
 

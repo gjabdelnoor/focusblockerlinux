@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Focusblock Toggle
+Comment=Toggle DNS focus block on or off
+Exec=/usr/local/bin/focusblock toggle
+Terminal=true
+Categories=Utility;
+Keywords=focus;productivity;dns;block;
